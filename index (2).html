@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartJobAI - Simple Job Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding-top: 70px;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .navbar-brand i {
+            color: #667eea;
+        }
+        
+        .navbar-brand span {
+            color: #667eea;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .hero h1 span {
+            color: #ffd700;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .badge-govt {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .badge-private {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .job-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .job-company {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .job-salary {
+            color: #667eea;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-control {
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.02);
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: #fafafa;
+            margin: 20px 0;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .toast-notify {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast-custom {
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            background: none;
+        }
+        
+        .modal-content {
+            border-radius: 10px;
+        }
+        
+        .btn-sm {
+            width: auto;
+            display: inline-block;
+        }
+        
+        .profile-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-robot"></i> SmartJob<span>AI</span>
+        </a>
+        <div class="ms-auto" id="authStatus">
+            <button class="btn btn-outline-primary btn-sm me-2" onclick="showRegisterModal()">Register</button>
+            <button class="btn btn-primary btn-sm" onclick="showLoginModal()">Login</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>AI-Powered <span>Smart Job</span> Recommendations</h1>
+        <p>Find Government & Private IT jobs matched to your skills</p>
+        <button class="btn btn-light mt-3" onclick="document.getElementById('jobs-tab').click()">
+            Browse Jobs <i class="bi bi-arrow-down"></i>
+        </button>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="jobs-tab" data-tab="jobs">📋 Jobs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="resume-tab" data-tab="resume">📄 AI Resume</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="feedback-tab" data-tab="feedback">💬 Feedback</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-tab="profile">👤 Profile</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4">
+        <!-- Jobs Tab -->
+        <div id="jobs-content" style="display: block;">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h4>🔥 Latest Job Openings</h4>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="filterJobs('all')">All</button>
+                    <button class="btn btn-sm btn-outline-success me-2" onclick="filterJobs('govt')">Government</button>
+                    <button class="btn btn-sm btn-outline-info" onclick="filterJobs('private')">Private IT</button>
+                </div>
+            </div>
+            <div id="jobList"></div>
+        </div>
+
+        <!-- Resume Tab -->
+        <div id="resume-content" style="display: none;">
+            <div class="form-card">
+                <h4><i class="bi bi-cloud-upload"></i> AI Resume Analysis</h4>
+                <p>Upload your resume and get smart job recommendations</p>
+                <div class="upload-area">
+                    <input type="file" id="resumeFile" class="form-control" accept=".txt,.pdf,.doc">
+                    <button class="btn btn-primary mt-3" onclick="analyzeResume()">
+                        <i class="bi bi-magic"></i> Analyze with AI
+                    </button>
+                </div>
+                <div id="aiResult" class="mt-3" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedback-content" style="display: none;">
+            <div class="form-card">
+                <h4><i class="bi bi-chat-dots"></i> Share Your Feedback</h4>
+                <form id="feedbackForm" onsubmit="return submitFeedback(event)">
+                    <input type="email" id="fbEmail" class="form-control" placeholder="Your Email" required>
+                    <textarea id="fbMessage" rows="4" class="form-control" placeholder="Your feedback or query..."></textarea>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </form>
+                <div id="fbResult" class="mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-content" style="display: none;">
+            <div class="form-card text-center">
+                <i class="bi bi-person-circle profile-icon"></i>
+                <div id="profileInfo">
+                    <p class="text-muted">Please login to view your profile</p>
+                    <button class="btn btn-primary" onclick="showLoginModal()">Login Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <p><i class="bi bi-robot"></i> SmartJobAI - Simple AI Job Portal</p>
+        <small>© 2024 All Rights Reserved</small>
+    </div>
+</footer>
+
+<!-- Modals -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5>Login to SmartJobAI</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="email" id="loginEmail" class="form-control" placeholder="Email Address">
+                <input type="password" id="loginPassword" class="form-control" placeholder="Password">
+                <button class="btn btn-primary" onclick="loginUser()">Login</button>
+                <p class="mt-3 text-center">Don't have an account? <a href="#" onclick="switchToRegister()">Register here</a></p>
+                <div id="loginMsg" class="mt-2 text-center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5>Create New Account</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="regName" class="form-control" placeholder="Full Name">
+                <input type="email" id="regEmail" class="form-control" placeholder="Email Address">
+                <input type="password" id="regPassword" class="form-control" placeholder="Password">
+                <input type="tel" id="regPhone" class="form-control" placeholder="WhatsApp Number">
+                <button class="btn btn-success" onclick="registerUser()">Register</button>
+                <p class="mt-3 text-center">Already have an account? <a href="#" onclick="switchToLogin()">Login here</a></p>
+                <div id="regMsg" class="mt-2 text-center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-notify" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ==================== DATA ====================
+    let currentUser = null;
+    let allJobs = [];
+    
+    // Load users from localStorage
+    let users = JSON.parse(localStorage.getItem('smartjob_users')) || [];
+    
+    // Sample jobs data
+    const sampleJobs = [
+        { id: 1, title: "Full Stack Developer", company: "Infosys", type: "Private IT", salary: "₹8-15 LPA", location: "Bangalore", link: "https://www.infosys.com/careers", sector: "private", skills: "React,Node,Python" },
+        { id: 2, title: "Junior Engineer", company: "UPSC", type: "Government", salary: "₹55,000-75,000", location: "Delhi", link: "https://upsc.gov.in", sector: "govt", skills: "Civil Engineering" },
+        { id: 3, title: "Data Scientist", company: "TCS", type: "Private IT", salary: "₹12-22 LPA", location: "Pune", link: "https://www.tcs.com/careers", sector: "private", skills: "Python,ML,SQL" },
+        { id: 4, title: "Bank PO", company: "IBPS", type: "Government", salary: "₹36,000-63,000", location: "All India", link: "https://www.ibps.in", sector: "govt", skills: "Banking,Finance" },
+        { id: 5, title: "Cloud Architect", company: "Amazon", type: "Private IT", salary: "₹25-40 LPA", location: "Hyderabad", link: "https://www.amazon.jobs", sector: "private", skills: "AWS,Docker" },
+        { id: 6, title: "SSC Officer", company: "SSC", type: "Government", salary: "₹44,900-1,42,400", location: "Multiple", link: "https://ssc.nic.in", sector: "govt", skills: "Administration" },
+        { id: 7, title: "Frontend Developer", company: "Google", type: "Private IT", salary: "₹20-35 LPA", location: "Bangalore", link: "https://careers.google.com", sector: "private", skills: "React,JavaScript" },
+        { id: 8, title: "RBI Officer", company: "RBI", type: "Government", salary: "₹77,000-1,20,000", location: "Mumbai", link: "https://opportunities.rbi.org.in", sector: "govt", skills: "Finance,Economics" }
+    ];
+    
+    // Load jobs
+    function loadJobs() {
+        allJobs = sampleJobs;
+        displayJobs(allJobs);
+    }
+    
+    // Display jobs
+    function displayJobs(jobs) {
+        const container = document.getElementById('jobList');
+        if (!jobs || jobs.length === 0) {
+            container.innerHTML = '<p class="text-center">No jobs found</p>';
+            return;
+        }
+        
+        container.innerHTML = jobs.map(job => `
+            <div class="job-card">
+                <div style="display: flex; justify-content: space-between;">
+                    <span class="${job.sector === 'govt' ? 'badge-govt' : 'badge-private'}">${job.type}</span>
+                    <small>📍 ${job.location}</small>
+                </div>
+                <div class="job-title">${job.title}</div>
+                <div class="job-company"><i class="bi bi-building"></i> ${job.company}</div>
+                <div class="job-salary">💰 ${job.salary}</div>
+                <button class="btn btn-primary btn-sm mt-2" onclick="applyJob('${job.title}', '${job.company}', '${job.link}')">
+                    Apply Now <i class="bi bi-box-arrow-up-right"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+    
+    // Filter jobs
+    function filterJobs(type) {
+        if (type === 'all') {
+            displayJobs(allJobs);
+        } else {
+            const filtered = allJobs.filter(job => job.sector === type);
+            displayJobs(filtered);
+        }
+    }
+    
+    // Apply for job
+    function applyJob(title, company, link) {
+        if (!currentUser) {
+            showToast('Please login first to apply!', 'warning');
+            showLoginModal();
+            return;
+        }
+        
+        window.open(link, '_blank');
+        showToast(`✓ Applied to ${title} at ${company}!`, 'success');
+        
+        // Save application
+        let apps = JSON.parse(localStorage.getItem(`apps_${currentUser.email}`) || '[]');
+        apps.push({ title, company, date: new Date().toLocaleDateString() });
+        localStorage.setItem(`apps_${currentUser.email}`, JSON.stringify(apps));
+        
+        alert(`📧 APPLICATION RECEIPT\n\nTo: ${currentUser.email}\nWhatsApp: ${currentUser.phone}\n\nJob: ${title} at ${company}\n\nThank you for applying! We'll notify you soon.`);
+    }
+    
+    // AI Resume Analysis
+    function analyzeResume() {
+        const file = document.getElementById('resumeFile').files[0];
+        if (!file) {
+            showToast('Please select a resume file first', 'warning');
+            return;
+        }
+        
+        if (!currentUser) {
+            showToast('Please login to use AI analysis', 'warning');
+            showLoginModal();
+            return;
+        }
+        
+        showToast('AI analyzing your resume...', 'info');
+        
+        setTimeout(() => {
+            const skillsList = ['JavaScript', 'Python', 'React', 'Java', 'SQL', 'AWS', 'Data Science', 'Machine Learning'];
+            const detected = skillsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            const matched = allJobs.filter(job => {
+                const jobSkills = job.skills.toLowerCase();
+                return detected.some(skill => jobSkills.includes(skill.toLowerCase()));
+            }).slice(0, 3);
+            
+            const resultDiv = document.getElementById('aiResult');
+            if (matched.length > 0) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong><i class="bi bi-magic"></i> AI Analysis Complete!</strong><br>
+                        <strong>Detected Skills:</strong> ${detected.join(', ')}<br><br>
+                        <strong>🎯 Recommended Jobs:</strong><br>
+                        ${matched.map(j => `• ${j.title} at ${j.company} (${j.salary})`).join('<br>')}
+                        <br><br>
+                        <button class="btn btn-sm btn-primary" onclick="document.getElementById('jobs-tab').click();">View All Jobs →</button>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-magic"></i> AI Suggestion</strong><br>
+                        Based on your profile, we recommend exploring roles in ${detected.join(', ')}.<br>
+                        Check out our job listings for opportunities!
+                    </div>
+                `;
+            }
+            resultDiv.style.display = 'block';
+            showToast('AI analysis completed!', 'success');
+        }, 1500);
+    }
+    
+    // ==================== AUTHENTICATION FIXED ====================
+    
+    // Register user
+    function registerUser() {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const phone = document.getElementById('regPhone').value.trim();
+        
+        // Validation
+        if (!name || !email || !password || !phone) {
+            document.getElementById('regMsg').innerHTML = '<span class="text-danger">❌ All fields are required!</span>';
+            return;
+        }
+        
+        // Check if email already exists
+        if (users.find(u => u.email === email)) {
+            document.getElementById('regMsg').innerHTML = '<span class="text-danger">❌ Email already registered!</span>';
+            return;
+        }
+        
+        // Create new user
+        const newUser = {
+            name: name,
+            email: email,
+            password: password,
+            phone: phone,
+            createdAt: new Date().toISOString()
+        };
+        
+        users.push(newUser);
+        localStorage.setItem('smartjob_users', JSON.stringify(users));
+        
+        document.getElementById('regMsg').innerHTML = '<span class="text-success">✅ Registration successful! Please login.</span>';
+        showToast('Registration successful! Please login.', 'success');
+        
+        // Clear form
+        document.getElementById('regName').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regPassword').value = '';
+        document.getElementById('regPhone').value = '';
+        
+        // Close register modal and open login modal after 1.5 seconds
+        setTimeout(() => {
+            const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            registerModal.hide();
+            showLoginModal();
+        }, 1500);
+    }
+    
+    // Login user
+    function loginUser() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            document.getElementById('loginMsg').innerHTML = '<span class="text-danger">❌ Please enter email and password!</span>';
+            return;
+        }
+        
+        // Find user
+        const user = users.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            currentUser = {
+                name: user.name,
+                email: user.email,
+                phone: user.phone
+            };
+            localStorage.setItem('smartjob_current', JSON.stringify(currentUser));
+            
+            document.getElementById('loginMsg').innerHTML = '<span class="text-success">✅ Login successful!</span>';
+            showToast(`Welcome back, ${user.name}!`, 'success');
+            
+            // Clear form
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            
+            // Close modal and update UI
+            setTimeout(() => {
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+                updateUI();
+            }, 1000);
+        } else {
+            document.getElementById('loginMsg').innerHTML = '<span class="text-danger">❌ Invalid email or password!</span>';
+        }
+    }
+    
+    // Logout user
+    function logoutUser() {
+        currentUser = null;
+        localStorage.removeItem('smartjob_current');
+        updateUI();
+        showToast('Logged out successfully!', 'info');
+        
+        // Switch to jobs tab
+        switchTab('jobs');
+    }
+    
+    // Update UI after login/logout
+    function updateUI() {
+        const authStatus = document.getElementById('authStatus');
+        const profileInfo = document.getElementById('profileInfo');
+        
+        if (currentUser) {
+            // Update navigation buttons
+            authStatus.innerHTML = `
+                <span class="me-2 fw-bold">👋 Hi, ${currentUser.name}</span>
+                <button class="btn btn-danger btn-sm" onclick="logoutUser()">Logout</button>
+            `;
+            
+            // Update profile section
+            const applications = JSON.parse(localStorage.getItem(`apps_${currentUser.email}`) || '[]');
+            profileInfo.innerHTML = `
+                <h4>${currentUser.name}</h4>
+                <p><i class="bi bi-envelope"></i> ${currentUser.email}</p>
+                <p><i class="bi bi-whatsapp"></i> ${currentUser.phone}</p>
+                <hr>
+                <div class="text-start">
+                    <h6>📊 Statistics</h6>
+                    <p>Jobs Applied: <strong>${applications.length}</strong></p>
+                    <p>Member Since: <strong>${new Date().toLocaleDateString()}</strong></p>
+                </div>
+                ${applications.length > 0 ? `
+                    <hr>
+                    <h6>📝 Recent Applications</h6>
+                    ${applications.slice(-3).reverse().map(app => `
+                        <div class="small mb-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            ${app.title} at ${app.company}<br>
+                            <small class="text-muted">${app.date}</small>
+                        </div>
+                    `).join('')}
+                ` : ''}
+            `;
+        } else {
+            // Show login/register buttons
+            authStatus.innerHTML = `
+                <button class="btn btn-outline-primary btn-sm me-2" onclick="showRegisterModal()">Register</button>
+                <button class="btn btn-primary btn-sm" onclick="showLoginModal()">Login</button>
+            `;
+            
+            profileInfo.innerHTML = `
+                <i class="bi bi-person-circle profile-icon"></i>
+                <p class="text-muted">Please login to view your profile</p>
+                <button class="btn btn-primary" onclick="showLoginModal()">Login Now</button>
+                <button class="btn btn-outline-primary mt-2" onclick="showRegisterModal()">Create Account</button>
+            `;
+        }
+    }
+    
+    // Show modals
+    function showLoginModal() {
+        document.getElementById('loginMsg').innerHTML = '';
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+    }
+    
+    function showRegisterModal() {
+        document.getElementById('regMsg').innerHTML = '';
+        const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+        registerModal.show();
+    }
+    
+    function switchToLogin() {
+        const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+        registerModal.hide();
+        showLoginModal();
+    }
+    
+    function switchToRegister() {
+        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+        loginModal.hide();
+        showRegisterModal();
+    }
+    
+    // ==================== FEEDBACK ====================
+    function submitFeedback(event) {
+        event.preventDefault();
+        const email = document.getElementById('fbEmail').value;
+        const message = document.getElementById('fbMessage').value;
+        
+        if (!email) {
+            showToast('Please enter your email', 'warning');
+            return false;
+        }
+        
+        // Store as XML format
+        const xmlFeedback = `<?xml version="1.0"?>
+<feedback>
+    <email>${email}</email>
+    <message>${message || 'No message'}</message>
+    <date>${new Date().toISOString()}</date>
+</feedback>`;
+        
+        console.log('Feedback saved in XML format:', xmlFeedback);
+        
+        // Save to localStorage
+        const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+        feedbacks.unshift({ email, message, date: new Date().toISOString() });
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+        
+        showToast('Thank you for your feedback! 🙏', 'success');
+        document.getElementById('fbMessage').value = '';
+        
+        return false;
+    }
+    
+    // ==================== TAB SWITCHING ====================
+    function switchTab(tabName) {
+        // Hide all content
+        document.getElementById('jobs-content').style.display = 'none';
+        document.getElementById('resume-content').style.display = 'none';
+        document.getElementById('feedback-content').style.display = 'none';
+        document.getElementById('profile-content').style.display = 'none';
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Show selected content
+        document.getElementById(`${tabName}-content`).style.display = 'block';
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+    
+    // ==================== UTILITIES ====================
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast-custom`;
+        toast.style.background = type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : '#17a2b8';
+        toast.style.color = type === 'warning' ? '#000' : '#fff';
+        toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    // Initialize everything
+    function init() {
+        loadJobs();
+        
+        // Check for existing session
+        const savedUser = localStorage.getItem('smartjob_current');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            updateUI();
+        }
+        
+        // Setup tab click handlers
+        document.getElementById('jobs-tab').onclick = () => switchTab('jobs');
+        document.getElementById('resume-tab').onclick = () => switchTab('resume');
+        document.getElementById('feedback-tab').onclick = () => switchTab('feedback');
+        document.getElementById('profile-tab').onclick = () => switchTab('profile');
+    }
+    
+    // Start the app
+    init();
+</script>
+</body>
+</html>
